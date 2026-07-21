@@ -245,7 +245,7 @@
       </div>
       <div class="card chart-card">
         <div class="chart-head">
-          <div><div class="chart-title">Weekly prompt volume</div><div class="chart-sub">Adoption compounding week over week · avg 6,490 / wk</div></div>
+          <div><div class="chart-title">Weekly prompt volume</div><div class="chart-sub">Representative weekly trend, compounding to a peak of 11,412 / wk · Mar 31 – Jul 7, 2026</div></div>
         </div>
         <div id="chartWeekly"></div>
       </div>
@@ -321,7 +321,7 @@
             <div class="row"><label>Working days / year</label><span class="val" id="vDays">250</span></div>
             <input type="range" id="rDays" min="120" max="260" step="5" value="250">
           </div>
-          <p class="note">Defaults reproduce the Cisco program's realized number. Move "adoption rate" to see potential vs. realized diverge.</p>
+          <p class="note">Defaults mirror the measured Cisco rate — ~29 min saved per active user per day at ~90% adoption — annualized. Move "adoption rate" to see potential vs. realized diverge.</p>
         </div>
         <div class="out">
           <div class="big money" id="oMoney">$0</div>
@@ -446,22 +446,22 @@ const TIERS={
 };
 
 const PHASES=[
-  {idx:"Phase 01",name:"Availability",tag:"Value = potential",color:"var(--s5)",fill:12,
-   sub:"The capability ships.",
-   body:"AI is in the org's hands — but a license is not an outcome. 100% of the value is still potential, 0% realized. Most transformation budgets are celebrated here and then quietly stall.",
-   metric1:["Realized value","~0%"],metric2:["Failure mode","'We bought it, so it's working'"]},
-  {idx:"Phase 02",name:"Adoption",tag:"Value starts flowing",color:"var(--s1)",fill:42,
-   sub:"Users cross the line into active use.",
-   body:"Latent value begins converting the first time a user gets a real result. In the Cisco program this is the Active tier — present, but not yet a habit. The leadership question shifts from 'did they log in?' to 'did it change the work?'",
-   metric1:["Cisco core-role adoption","89–94%"],metric2:["Tier","Active users"]},
-  {idx:"Phase 03",name:"Habit",tag:"Value compounds",color:"var(--s3)",fill:72,
-   sub:"Use becomes a weekly, then daily reflex.",
-   body:"Engaged and Power users fold AI into the fabric of the workflow. This is where value compounds — cookbook workflows like Deal Pulse and Value Realization run hundreds of times and stack into thousands of hours.",
-   metric1:["Power-tier sellers","up to 40%"],metric2:["Tier","Engaged → Power"]},
-  {idx:"Phase 04",name:"Realized Value",tag:"Value = realized",color:"var(--s6)",fill:100,
-   sub:"Value becomes a business outcome.",
-   body:"Productivity stops being the story. Realized value shows up where leadership actually measures it — retention, expansion, and incremental revenue. Hours saved is the leading indicator; revenue realized is the goal. The whole point is to get here — and to prove you did, in numbers a CFO trusts.",
-   metric1:["Leading indicator","32,891 h saved"],metric2:["The goal","Incremental revenue"]}
+  {idx:"Phase 01",name:"Activity",tag:"Value = potential",color:"var(--s5)",fill:25,
+   sub:"AI is being used — at scale.",
+   body:"Prompts, adoption, engagement. Activity is the first honest signal — it proves reach, and that habits are forming — but usage alone is not value. Most rollouts report activity and stop here.",
+   metric1:["Prompts analyzed","110,330"],metric2:["Core-role adoption","89–94%"]},
+  {idx:"Phase 02",name:"Efficiency",tag:"Time per task falls",color:"var(--s1)",fill:50,
+   sub:"The same work takes less time.",
+   body:"Workflows compress — a 50-minute deal analysis becomes 10, a 14-hour value review becomes 6. Efficiency is measured task by task, and rolls up to ~29 minutes returned per seller per day.",
+   metric1:["Saved / seller / day","~29 min"],metric2:["Cookbook workflow runs","9,856"]},
+  {idx:"Phase 03",name:"Capacity Redeployed",tag:"Hours go back to selling",color:"var(--s3)",fill:75,
+   sub:"Saved time becomes selling time.",
+   body:"Minutes compound into organizational capacity — 32,891 hours returned — and the transformation question becomes where that capacity goes: more customer touches, deeper renewal readiness, broader pipeline coverage.",
+   metric1:["Hours returned","32,891 h"],metric2:["Ambition","~30% of the day back to selling"]},
+  {idx:"Phase 04",name:"Business Impact",tag:"Value = realized",color:"var(--s6)",fill:100,
+   sub:"Value shows up where leadership measures it.",
+   body:"Retention, expansion, and incremental revenue — proven in numbers a CFO trusts. Hours returned is the leading indicator; business impact is the goal. The whole point is to get here, and to prove you did.",
+   metric1:["Leading indicator","Hours returned"],metric2:["The goal","Incremental revenue"]}
 ];
 
 /* ---------- helpers ---------- */
@@ -507,23 +507,24 @@ function lineChart(){
 /* ---------- BAR: weekly prompts ---------- */
 function weeklyChart(){
   const box=$("#chartWeekly");box.innerHTML="";
+  const WP=PROMPTS.slice(0,15),WW=WEEKS.slice(0,15);
   const W=box.clientWidth||520,H=260,pad={l:44,r:14,t:14,b:26};
   const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H},box);
-  const maxY=12000,n=PROMPTS.length;
+  const maxY=12000,n=WP.length;
   const bw=(W-pad.l-pad.r)/n*0.62;
   const X=i=>pad.l+(W-pad.l-pad.r)*(i+.5)/n;
   const Y=v=>pad.t+(H-pad.t-pad.b)*(1-v/maxY);
   for(let g=0;g<=4;g++){const v=maxY*g/4,y=Y(v);
     el("line",{x1:pad.l,y1:y,x2:W-pad.r,y2:y,class:"gridline"},svg);
     const t=el("text",{x:pad.l-8,y:y+3,"text-anchor":"end"},svg);t.textContent=(v/1000)+"k";}
-  PROMPTS.forEach((v,i)=>{
+  WP.forEach((v,i)=>{
     const h=(H-pad.t-pad.b)*v/maxY,x=X(i)-bw/2,y=Y(v);
     el("rect",{x,y,width:bw,height:h,rx:3,fill:i===14?"var(--s6)":"var(--s1)",style:"cursor:pointer"},svg)
-      .addEventListener("mousemove",e=>showTT(`<b>${WEEKS[i]}</b>${i===16?' · <span class="muted">partial wk</span>':''}<br><b>${fmt(v)}</b> prompts`,e.clientX,e.clientY));
-    if((i%3===0&&i<n-2)||i===n-1){const t=el("text",{x:X(i),y:H-8,"text-anchor":"middle"},svg);t.textContent=WEEKS[i];}
+      .addEventListener("mousemove",e=>showTT(`<b>${WW[i]}</b><br><b>${fmt(v)}</b> prompts`,e.clientX,e.clientY));
+    if((i%3===0&&i<n-2)||i===n-1){const t=el("text",{x:X(i),y:H-8,"text-anchor":"middle"},svg);t.textContent=WW[i];}
   });
   svg.addEventListener("mouseleave",hideTT);
-  const pk=el("text",{x:X(14),y:Y(11412)-8,"text-anchor":"middle",style:"fill:var(--good-ink);font-weight:800;font-size:11px"},svg);
+  const pk=el("text",{x:X(14)+bw/2,y:Y(11412)-8,"text-anchor":"end",style:"fill:var(--good-ink);font-weight:800;font-size:11px"},svg);
   pk.textContent="peak 11,412";
 }
 
