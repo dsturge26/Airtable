@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drew Sturge — Turning AI's Value Potential into Value Realized</title>
+<meta name="description" content="An interactive case study on measuring and scaling enterprise AI adoption — built for the Airtable Director, AI Transformation & Customer Success application.">
+<style>
+  :root{
+    --plane:#f7f7f5; --surface:#ffffff; --surface-2:#fbfbfa;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --grid:#e8e7e1; --baseline:#d7d6cf; --border:rgba(11,11,11,0.09);
+    /* validated categorical palette (light) */
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+    --good:#0ca30c; --good-ink:#006300;
+    --accent:#2a78d6; --accent-2:#4a3aa7;
+    --hero-1:#0d1b2e; --hero-2:#16324f;
+    --radius:16px; --shadow:0 1px 2px rgba(11,11,11,.05),0 8px 30px rgba(11,11,11,.06);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:var(--plane);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  h1,h2,h3{line-height:1.15;letter-spacing:-.02em;margin:0}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .section{padding:76px 0}
+  .eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .lede{font-size:1.12rem;color:var(--ink-2);max-width:64ch}
+  .tabnums{font-variant-numeric:tabular-nums}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,247,245,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-weight:800;letter-spacing:-.02em}
+  .brand span{color:var(--accent)}
+  .navlinks{display:flex;gap:26px;font-size:.9rem;font-weight:600}
+  .navlinks a{color:var(--ink-2)}
+  .navlinks a:hover{color:var(--ink)}
+  @media(max-width:760px){.navlinks{display:none}}
+
+  /* HERO */
+  .hero{background:radial-gradient(1200px 500px at 80% -10%,rgba(42,120,214,.28),transparent),
+        radial-gradient(900px 500px at 0% 110%,rgba(74,58,167,.30),transparent),
+        linear-gradient(160deg,var(--hero-1),var(--hero-2));
+        color:#fff;padding:92px 0 84px;position:relative;overflow:hidden}
+  .hero .badge{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.06em;
+        background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:7px 13px;border-radius:999px;color:#e9f1ff}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.5rem);font-weight:800;margin:22px 0 0;max-width:20ch}
+  .hero h1 .grad{background:linear-gradient(92deg,#8fc0ff,#c9b8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.sub{font-size:1.18rem;color:#d5e2f2;margin:20px 0 0;max-width:60ch}
+  .hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:.95rem;padding:13px 20px;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:transform .12s ease,box-shadow .12s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:#fff;color:var(--hero-1)}
+  .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.28)}
+  .hero .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:52px}
+  .hero .kpi{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:18px}
+  .hero .kpi .n{font-size:1.9rem;font-weight:800;letter-spacing:-.02em}
+  .hero .kpi .l{font-size:.82rem;color:#c6d6ec;margin-top:3px}
+  @media(max-width:760px){.hero .kpis{grid-template-columns:repeat(2,1fr)}}
+
+  /* generic cards */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+  h2.h{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin:12px 0 10px}
+
+  /* FOUR PHASES */
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  @media(max-width:860px){.phases{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.phases{grid-template-columns:1fr}}
+  .phase{cursor:pointer;padding:22px 20px;border-radius:14px;border:1px solid var(--border);background:var(--surface);position:relative;transition:transform .14s ease,box-shadow .14s ease,border-color .14s}
+  .phase:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .phase.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(42,120,214,.14)}
+  .phase .idx{font-size:.72rem;font-weight:800;letter-spacing:.12em;color:var(--muted)}
+  .phase h3{font-size:1.18rem;margin:8px 0 6px;font-weight:800}
+  .phase .tag{font-size:.78rem;font-weight:700;display:inline-block;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+  .phase p{font-size:.9rem;color:var(--ink-2);margin:0}
+  .phase .bar{height:6px;border-radius:6px;background:var(--grid);margin-top:14px;overflow:hidden}
+  .phase .bar span{display:block;height:100%;border-radius:6px}
+  .phase-detail{margin-top:22px;padding:24px;border-radius:14px;background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--border)}
+  .phase-detail h3{font-size:1.25rem;font-weight:800}
+  .phase-detail .meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:14px}
+  .phase-detail .meta .m .k{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+  .phase-detail .meta .m .v{font-size:1.15rem;font-weight:800;margin-top:2px}
+
+  /* stat tiles */
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:8px}
+  @media(max-width:920px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  .tile{padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
+  .tile .n{font-size:1.85rem;font-weight:800;letter-spacing:-.02em}
+  .tile .n.green{color:var(--good-ink)}
+  .tile .l{font-size:.82rem;color:var(--ink-2);margin-top:4px}
+
+  /* chart shells */
+  .chart-card{padding:22px}
+  .chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+  .chart-title{font-weight:800;font-size:1.05rem}
+  .chart-sub{font-size:.84rem;color:var(--muted);margin-top:2px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.82rem;color:var(--ink-2)}
+  .legend .li{display:flex;align-items:center;gap:7px}
+  .legend .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  svg .gridline{stroke:var(--grid);stroke-width:1}
+  svg .baseline{stroke:var(--baseline);stroke-width:1}
+  svg text{fill:var(--muted);font-size:11px;font-family:var(--font)}
+  .toggle{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px}
+  .toggle button{border:0;background:transparent;font-family:var(--font);font-weight:700;font-size:.82rem;color:var(--ink-2);padding:7px 13px;border-radius:8px;cursor:pointer}
+  .toggle button.on{background:var(--accent);color:#fff}
+
+  /* tooltip */
+  #tt{position:fixed;pointer-events:none;z-index:99;background:#0b0b0b;color:#fff;font-size:.78rem;padding:8px 10px;border-radius:8px;opacity:0;transform:translate(-50%,-115%);transition:opacity .08s;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  #tt b{color:#fff}
+  #tt .muted{color:#b9b9b9}
+
+  /* method */
+  .steps{counter-reset:s;display:grid;gap:14px;margin-top:22px}
+  .step{display:flex;gap:16px;padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
+  .step .num{flex:0 0 40px;height:40px;border-radius:12px;background:linear-gradient(160deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.05rem;font-weight:800;margin-bottom:3px}
+  .step p{margin:0;color:var(--ink-2);font-size:.92rem}
+
+  /* calculator */
+  .calc{display:grid;grid-template-columns:1.05fr 1fr;gap:22px}
+  @media(max-width:860px){.calc{grid-template-columns:1fr}}
+  .ctrl{margin-bottom:20px}
+  .ctrl .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .ctrl label{font-weight:700;font-size:.92rem}
+  .ctrl .val{font-weight:800;font-size:1rem;color:var(--accent);font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:var(--grid);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid #fff}
+  .out{padding:24px;border-radius:16px;background:linear-gradient(160deg,#0d1b2e,#16324f);color:#fff}
+  .out .big{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .out .big.money{color:#8fe0b0}
+  .out .lab{font-size:.82rem;color:#c6d6ec;margin:4px 0 0}
+  .out .divide{height:1px;background:rgba(255,255,255,.15);margin:20px 0}
+  .out .gap{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:16px;margin-top:18px}
+  .out .gap .t{font-size:.8rem;color:#c6d6ec;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .out .meter{height:12px;border-radius:8px;background:rgba(255,255,255,.14);margin:12px 0 6px;overflow:hidden;display:flex}
+  .out .meter .realized{background:#8fe0b0;height:100%}
+  .out .meter .unrealized{background:repeating-linear-gradient(45deg,rgba(255,255,255,.18),rgba(255,255,255,.18) 5px,rgba(255,255,255,.05) 5px,rgba(255,255,255,.05) 10px);height:100%}
+
+  /* airtable mapping */
+  .map{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+  @media(max-width:860px){.map{grid-template-columns:1fr}}
+  .mapcard{padding:22px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
+  .mapcard .req{font-size:.8rem;font-weight:700;color:var(--accent);letter-spacing:.02em}
+  .mapcard h3{font-size:1.05rem;font-weight:800;margin:6px 0 6px}
+  .mapcard p{margin:0;color:var(--ink-2);font-size:.92rem}
+
+  /* table */
+  table.data{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+  table.data th,table.data td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--grid)}
+  table.data th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  table.data td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  table.data tr:last-child td{border-bottom:0}
+  table.data tr.total td{font-weight:800;border-top:2px solid var(--baseline)}
+
+  .note{font-size:.82rem;color:var(--muted);margin-top:14px}
+  .pill{display:inline-block;font-size:.72rem;font-weight:700;background:rgba(42,120,214,.1);color:var(--accent);padding:3px 9px;border-radius:999px}
+  footer{background:#0d1b2e;color:#c6d6ec;padding:54px 0 40px;margin-top:20px}
+  footer a{color:#8fc0ff}
+  footer .fgrid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end}
+  .disc{font-size:.78rem;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:26px}
+</style>
+</head>
+<body>
+<div id="tt"></div>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Drew Sturge<span>.</span></div>
+    <div class="navlinks">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#proof">The Experiment</a>
+      <a href="#calculator">Value Calculator</a>
+      <a href="#method">Method</a>
+      <a href="#airtable">Why Airtable</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">● Built for the Airtable application · Director, AI Transformation &amp; Customer Success</span>
+    <h1>I turn AI's <span class="grad">value potential</span> into <span class="grad">value realized.</span></h1>
+    <p class="sub">This is a live, interactive answer to "show us your last AI experiment." I used AI to measure AI — analyzing <b>105,508</b> real seller prompts to quantify exactly where an enterprise rollout created value, who realized it, and who's next.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#proof">Explore the experiment ↓</a>
+      <a class="btn btn-ghost" href="#calculator">Try the value calculator</a>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n tabnums">105,508</div><div class="l">real prompts analyzed</div></div>
+      <div class="kpi"><div class="n tabnums">31,518</div><div class="l">seller hours saved</div></div>
+      <div class="kpi"><div class="n tabnums">~29 min</div><div class="l">saved / seller / day</div></div>
+      <div class="kpi"><div class="n tabnums">89–94%</div><div class="l">adoption across core roles</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PHILOSOPHY -->
+<section class="section" id="philosophy">
+  <div class="wrap">
+    <span class="eyebrow">The Philosophy</span>
+    <h2 class="h">Value Potential → Value Realized</h2>
+    <p class="lede">Enterprises buy AI capability and assume value follows. It doesn't. Value only shows up when a capability moves through four phases — and most transformation stalls between phase 2 and phase 4. My job is to move an organization along this curve, then <b>measure the distance travelled in hours and outcomes</b>, not in licenses sold.</p>
+
+    <div class="phases" id="phases"></div>
+    <div class="phase-detail" id="phaseDetail"></div>
+    <p class="note">Framework shown is a working reconstruction of my "Four Phases of AI Value" model, mapped to the adoption + value tiers in the case study below. Drew — swap in your exact phase names and I'll update.</p>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="section" id="proof" style="background:linear-gradient(180deg,#fff,#f7f7f5)">
+  <div class="wrap">
+    <span class="eyebrow">The Experiment · My last AI experiment</span>
+    <h2 class="h">Measuring an enterprise AI rollout at Cisco</h2>
+    <p class="lede">Cisco's CX AI Assistant went GA to <b>851 active sellers</b> across a 1,340-person renewals organization. The question leadership couldn't answer: <i>is it actually working, and where?</i> I built the analysis that answered it — using AI to categorize and value <b>every prompt</b> across 76 business days.</p>
+
+    <div class="tiles" style="margin-top:26px">
+      <div class="tile"><div class="n tabnums">105,508</div><div class="l">Total prompts analyzed</div></div>
+      <div class="tile"><div class="n tabnums">89.5%</div><div class="l">Auto-categorized into renewal work</div></div>
+      <div class="tile"><div class="n tabnums">9,430</div><div class="l">Cookbook-equivalent workflow runs</div></div>
+      <div class="tile"><div class="n green tabnums">31,517<span style="font-size:1rem">h</span></div><div class="l">Estimated seller hours saved</div></div>
+      <div class="tile"><div class="n tabnums">~29 min</div><div class="l">Saved / seller / day</div></div>
+    </div>
+
+    <div class="grid2" style="margin-top:22px">
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div><div class="chart-title">Cumulative hours saved since GA</div><div class="chart-sub">Blended cookbook + open-prompt model · Mar 31 – Jul 14, 2026</div></div>
+        </div>
+        <div id="chartHours"></div>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div><div class="chart-title">Weekly prompt volume</div><div class="chart-sub">Adoption compounding week over week · avg 6,594 / wk</div></div>
+        </div>
+        <div id="chartWeekly"></div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:22px">
+      <div class="card chart-card">
+        <div class="chart-head"><div><div class="chart-title">Where the value lands</div><div class="chart-sub">Prompt distribution by purpose</div></div></div>
+        <div id="chartCat"></div>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-head" style="align-items:center">
+          <div><div class="chart-title" id="tierTitle">Who's adopting — by role</div><div class="chart-sub" id="tierSub">Active vs. engaged vs. power users, share of population using</div></div>
+          <div class="toggle" id="tierToggle">
+            <button class="on" data-view="adopt">Adoption</button>
+            <button data-view="value">Value realized</button>
+          </div>
+        </div>
+        <div id="chartTiers"></div>
+        <div class="legend" id="tierLegend"></div>
+      </div>
+    </div>
+
+    <div class="card chart-card" style="margin-top:22px">
+      <div class="chart-head"><div><div class="chart-title">Two independent evidence tracks → one defensible number</div><div class="chart-sub">I never rested the claim on a single method. Seller-reported actuals and a complexity-tiered model were built separately, then combined.</div></div></div>
+      <div class="grid2" style="margin-top:6px">
+        <div>
+          <div style="font-weight:800;margin-bottom:4px">Track 1 — Cookbook actuals <span class="pill">7,759 h</span></div>
+          <div class="chart-sub" style="margin-bottom:8px">Before/after times reported by the sellers who designed each workflow.</div>
+          <table class="data">
+            <thead><tr><th>Workflow</th><th style="text-align:right">Uses</th><th style="text-align:right">Hours</th></tr></thead>
+            <tbody id="cookbookBody"></tbody>
+          </table>
+        </div>
+        <div>
+          <div style="font-weight:800;margin-bottom:4px">Track 2 — Complexity model <span class="pill">23,758 h</span></div>
+          <div class="chart-sub" style="margin-bottom:8px">96,369 non-shortcut prompts classified by task complexity, each assigned a conservative time-equivalent.</div>
+          <div id="chartComplexity"></div>
+        </div>
+      </div>
+    </div>
+    <div class="disc">🔒 <b>Confidentiality:</b> All figures are real program aggregates; individual users and any identifying data have been removed for this public page. Source: Cisco CX AI Assistant program, Mar 31 – Jul 15, 2026.</div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="section" id="calculator">
+  <div class="wrap">
+    <span class="eyebrow">Interactive · The tool a CS leader actually uses</span>
+    <h2 class="h">AI Value Realization Calculator</h2>
+    <p class="lede">The same logic that produced the number above, generalized. Model any customer's rollout — then watch the <b>value realization gap</b>: the hours sitting on the table between the value they've <i>realized</i> and the value still <i>latent</i> in low adoption. Closing that gap is the entire job.</p>
+
+    <div class="card" style="padding:26px;margin-top:24px">
+      <div class="calc">
+        <div>
+          <div class="ctrl">
+            <div class="row"><label>Users with access</label><span class="val" id="vUsers">850</span></div>
+            <input type="range" id="rUsers" min="50" max="5000" step="50" value="850">
+          </div>
+          <div class="ctrl">
+            <div class="row"><label>Minutes saved / active user / day</label><span class="val" id="vMin">29</span></div>
+            <input type="range" id="rMin" min="5" max="90" step="1" value="29">
+          </div>
+          <div class="ctrl">
+            <div class="row"><label>Adoption rate (active users)</label><span class="val" id="vAdopt">90%</span></div>
+            <input type="range" id="rAdopt" min="5" max="100" step="1" value="90">
+          </div>
+          <div class="ctrl">
+            <div class="row"><label>Loaded cost / hour</label><span class="val" id="vCost">$75</span></div>
+            <input type="range" id="rCost" min="25" max="250" step="5" value="75">
+          </div>
+          <div class="ctrl">
+            <div class="row"><label>Working days / year</label><span class="val" id="vDays">250</span></div>
+            <input type="range" id="rDays" min="120" max="260" step="5" value="250">
+          </div>
+          <p class="note">Defaults reproduce the Cisco program's realized number. Move "adoption rate" to see potential vs. realized diverge.</p>
+        </div>
+        <div class="out">
+          <div class="big money" id="oMoney">$0</div>
+          <div class="lab">Annual value realized</div>
+          <div class="divide"></div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap">
+            <div><div class="big" style="font-size:1.7rem" id="oHours">0</div><div class="lab">hours saved / year</div></div>
+            <div><div class="big" style="font-size:1.7rem" id="oPer">0</div><div class="lab">hours / user / year</div></div>
+          </div>
+          <div class="gap">
+            <div class="t">Value realization gap</div>
+            <div class="meter"><div class="realized" id="mReal" style="width:60%"></div><div class="unrealized" id="mUnreal" style="width:40%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;color:#c6d6ec">
+              <span><b style="color:#8fe0b0" id="gReal">$0</b> realized</span>
+              <span><b id="gUnreal">$0</b> still latent</span>
+            </div>
+            <div class="lab" id="gapMsg" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="section" id="method" style="background:linear-gradient(180deg,#fff,#f7f7f5)">
+  <div class="wrap">
+    <span class="eyebrow">How I did it · AI fluency, not AI theater</span>
+    <h2 class="h">The method behind the number</h2>
+    <p class="lede">105,508 free-form prompts is unstructured chaos. Turning it into a board-ready value story took a repeatable AI pipeline — the same muscle I'd bring to standing up a transformation methodology and adoption playbooks.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div><h3>Semantic categorization at scale</h3><p>Used LLM classification to map every prompt — including 9,110 free-form requests with no shortcut — to a workflow and purpose (e.g. "analyze risk for Deal ID 71228656" → Deal Pulse). Result: <b>89.5%</b> categorized into renewal activities.</p></div></div>
+      <div class="step"><div class="num">2</div><div><h3>Complexity-tiered time modeling</h3><p>Classified non-shortcut prompts into Simple / Moderate / Complex and assigned conservative, defensible time-equivalents (3–5, 10–20, 30–60 min) rather than one blanket assumption.</p></div></div>
+      <div class="step"><div class="num">3</div><div><h3>Two independent evidence tracks</h3><p>Built seller-reported actuals and the model separately, so the headline number is corroborated, not asserted — the way you earn an executive's trust in an AI claim.</p></div></div>
+      <div class="step"><div class="num">4</div><div><h3>Adoption + value tiering</h3><p>Segmented every role into Inactive → Active → Engaged → Power on <i>both</i> usage and hours banked, turning a flat "we rolled it out" into a targeted "here's who's next" plan.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AIRTABLE -->
+<section class="section" id="airtable">
+  <div class="wrap">
+    <span class="eyebrow">Why this maps to the role</span>
+    <h2 class="h">What I'd bring to Airtable's customers</h2>
+    <p class="lede">The Director, AI Transformation &amp; Customer Success role asks for someone who can operationalize transformation, guide customers through AI adoption, and own value realization. That's the exact work behind everything above.</p>
+    <div class="map">
+      <div class="mapcard"><div class="req">Define &amp; operationalize transformation methodology</div><h3>A repeatable value model, not a vibe</h3><p>The Four Phases framework + two-track measurement is a portable methodology I can hand to a team and apply account by account.</p></div>
+      <div class="mapcard"><div class="req">Guide customers through AI adoption</div><h3>From access to habit to outcome</h3><p>I've moved a 1,340-person org to 89–94% adoption in core roles and can diagnose exactly where a customer stalls on the curve.</p></div>
+      <div class="mapcard"><div class="req">Own retention, adoption &amp; value realization metrics</div><h3>Value measured in hours &amp; outcomes</h3><p>31,518 hours is a number a CFO respects. I instrument the value story so renewals and expansion have evidence behind them.</p></div>
+      <div class="mapcard"><div class="req">Develop repeatable executive playbooks</div><h3>"Who's next" as a growth engine</h3><p>Adoption tiering turns a static report into a prioritized expansion plan — the Tier 2 &amp; 3 roles are the next wave of realized value.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <div class="brand" style="color:#fff;font-size:1.3rem">Drew Sturge<span style="color:#8fc0ff">.</span></div>
+        <p style="max-width:52ch;margin:10px 0 0">Turning AI's value potential into value realized — measured, repeatable, and built to earn an executive's trust.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.82rem">Built as a live answer for the Airtable application.</div>
+        <div style="font-size:.82rem;margin-top:6px"><a href="https://github.com/dsturge26/Airtable">github.com/dsturge26/Airtable</a></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- DATA (real program aggregates, individuals removed) ---------- */
+const WEEKS=["Mar 31","Apr 7","Apr 14","Apr 21","Apr 28","May 5","May 12","May 19","May 26","Jun 2","Jun 9","Jun 16","Jun 23","Jun 30","Jul 7","Jul 14"];
+const PROMPTS=[1722,2414,3106,3798,4491,5183,5875,6570,7259,7951,8643,9336,10028,10720,11412,7000];
+const CUMHRS=[514.4,1235.5,2163.3,3297.8,4639.4,6187.7,7942.7,9905.3,12073.7,14448.8,17030.6,19819.5,22815.1,26017.4,29426.4,31517.5];
+
+const CATS=[
+  {name:"Territory, Opp Planning & Renewal Readiness",n:82973,pct:78.6,sub:"Opportunity planning & prioritization"},
+  {name:"Opportunity & Pipeline Management",n:9610,pct:9.1,sub:"SFDC management"},
+  {name:"Other / Uncategorized",n:11114,pct:10.5,sub:"Exports, follow-ups, edge cases"},
+  {name:"Administration & Personal Development",n:1572,pct:1.5,sub:"Training & enablement"},
+  {name:"Customer & Partner Engagements",n:239,pct:0.2,sub:"Customer & partner comms"}
+];
+
+const COOKBOOK=[
+  {w:"Deal Pulse",uses:4637,h:2860.0},
+  {w:"EA Consumption Report",uses:3100,h:2066.7},
+  {w:"Value Realization",uses:189,h:1512.0},
+  {w:"Exec Priority Review",uses:379,h:758.0},
+  {w:"Pipeline Prioritization",uses:977,h:488.5},
+  {w:"+2 more workflows",uses:148,h:74.0}
+];
+
+const COMPLEX=[
+  {k:"Simple",def:"Quick lookup, single data point",mix:30,t:"3–5 min"},
+  {k:"Moderate",def:"Multi-step research, cross-reference",mix:48,t:"10–20 min"},
+  {k:"Complex",def:"Pipeline analysis, exec narrative, batch ops",mix:22,t:"30–60 min"}
+];
+
+/* adoption tiers: [active, engaged, power], using% — aggregate role counts, no individuals */
+const TIERS={
+  adopt:[
+    {role:"RS (IC)",a:96,e:73,p:88,using:94},
+    {role:"RS Leader",a:19,e:5,p:19,using:91},
+    {role:"RM (IC)",a:296,e:99,p:99,using:93},
+    {role:"RM Leader",a:43,e:9,p:12,using:89},
+    {role:"SP&O / PM",a:38,e:6,p:5,using:49},
+    {role:"Partner Renewals",a:20,e:1,p:0,using:66},
+    {role:"Partner CS",a:8,e:0,p:0,using:15},
+    {role:"DDM / BDM",a:13,e:1,p:14,using:14}
+  ],
+  value:[
+    {role:"RS (IC)",a:84,e:93,p:77,using:94},
+    {role:"RS Leader",a:16,e:12,p:13,using:91},
+    {role:"RM (IC)",a:263,e:141,p:89,using:93},
+    {role:"RM Leader",a:34,e:19,p:10,using:89}
+  ]
+};
+
+const PHASES=[
+  {idx:"Phase 01",name:"Availability",tag:"Value = potential",color:"var(--s5)",fill:12,
+   sub:"The capability ships.",
+   body:"AI is in the org's hands — but a license is not an outcome. 100% of the value is still potential, 0% realized. Most transformation budgets are celebrated here and then quietly stall.",
+   metric1:["Realized value","~0%"],metric2:["Failure mode","'We bought it, so it's working'"]},
+  {idx:"Phase 02",name:"Adoption",tag:"Value starts flowing",color:"var(--s1)",fill:42,
+   sub:"Users cross the line into active use.",
+   body:"Latent value begins converting the first time a user gets a real result. In the Cisco program this is the Active tier — present, but not yet a habit. The leadership question shifts from 'did they log in?' to 'did it change the work?'",
+   metric1:["Cisco core-role adoption","89–94%"],metric2:["Tier","Active users"]},
+  {idx:"Phase 03",name:"Habit",tag:"Value compounds",color:"var(--s3)",fill:72,
+   sub:"Use becomes a weekly, then daily reflex.",
+   body:"Engaged and Power users fold AI into the fabric of the workflow. This is where value compounds — cookbook workflows like Deal Pulse and Value Realization run hundreds of times and stack into thousands of hours.",
+   metric1:["Power-tier sellers","up to 40%"],metric2:["Tier","Engaged → Power"]},
+  {idx:"Phase 04",name:"Realized Value",tag:"Value = realized",color:"var(--s6)",fill:100,
+   sub:"Outcomes are measured and banked.",
+   body:"The distance travelled is quantified — hours saved, renewal readiness, business impact — in numbers a CFO trusts. This is the only phase that renews contracts and funds expansion. The whole point is to get here, and to prove you did.",
+   metric1:["Hours realized","31,518 h"],metric2:["Per seller / day","~29 min"]}
+];
+
+/* ---------- helpers ---------- */
+const $=(s,el=document)=>el.querySelector(s);
+const fmt=n=>n.toLocaleString('en-US');
+const SVGNS="http://www.w3.org/2000/svg";
+function el(tag,attrs={},parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+const tt=$("#tt");
+function showTT(html,x,y){tt.innerHTML=html;tt.style.left=x+"px";tt.style.top=y+"px";tt.style.opacity=1;}
+function hideTT(){tt.style.opacity=0;}
+
+/* ---------- LINE: cumulative hours ---------- */
+function lineChart(){
+  const box=$("#chartHours");box.innerHTML="";
+  const W=box.clientWidth||520,H=260,pad={l:46,r:16,t:14,b:26};
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H},box);
+  const maxY=32000, n=CUMHRS.length;
+  const X=i=>pad.l+(W-pad.l-pad.r)*i/(n-1);
+  const Y=v=>pad.t+(H-pad.t-pad.b)*(1-v/maxY);
+  for(let g=0;g<=4;g++){const v=maxY*g/4,y=Y(v);
+    el("line",{x1:pad.l,y1:y,x2:W-pad.r,y2:y,class:"gridline"},svg);
+    const t=el("text",{x:pad.l-8,y:y+3,"text-anchor":"end"},svg);t.textContent=(v/1000)+"k";}
+  WEEKS.forEach((w,i)=>{if(i%3===0||i===n-1){const t=el("text",{x:X(i),y:H-8,"text-anchor":"middle"},svg);t.textContent=w;}});
+  // area
+  let d=`M ${X(0)} ${Y(CUMHRS[0])}`;CUMHRS.forEach((v,i)=>{if(i)d+=` L ${X(i)} ${Y(v)}`;});
+  const grad=el("linearGradient",{id:"gArea",x1:0,y1:0,x2:0,y2:1},svg);
+  el("stop",{offset:"0%","stop-color":"#2a78d6","stop-opacity":.22},grad);
+  el("stop",{offset:"100%","stop-color":"#2a78d6","stop-opacity":0},grad);
+  el("path",{d:d+` L ${X(n-1)} ${Y(0)} L ${X(0)} ${Y(0)} Z`,fill:"url(#gArea)"},svg);
+  el("path",{d,fill:"none",stroke:"var(--s1)","stroke-width":2.4,"stroke-linejoin":"round"},svg);
+  // end label
+  const endT=el("text",{x:X(n-1)-4,y:Y(CUMHRS[n-1])-10,"text-anchor":"end",style:"fill:var(--good-ink);font-weight:800;font-size:12px"},svg);
+  endT.textContent="31,518 h";
+  // hover dots
+  CUMHRS.forEach((v,i)=>{
+    const c=el("circle",{cx:X(i),cy:Y(v),r:4,fill:"#fff",stroke:"var(--s1)","stroke-width":2,style:"cursor:pointer"},svg);
+    const hit=el("circle",{cx:X(i),cy:Y(v),r:14,fill:"transparent",style:"cursor:pointer"},svg);
+    hit.addEventListener("mousemove",e=>showTT(`<b>${WEEKS[i]}</b> · <span class="muted">cumulative</span><br><b>${fmt(v)} h</b> saved`,e.clientX,e.clientY));
+    hit.addEventListener("mouseleave",hideTT);
+  });
+}
+
+/* ---------- BAR: weekly prompts ---------- */
+function weeklyChart(){
+  const box=$("#chartWeekly");box.innerHTML="";
+  const W=box.clientWidth||520,H=260,pad={l:44,r:14,t:14,b:26};
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H},box);
+  const maxY=12000,n=PROMPTS.length;
+  const bw=(W-pad.l-pad.r)/n*0.62;
+  const X=i=>pad.l+(W-pad.l-pad.r)*(i+.5)/n;
+  const Y=v=>pad.t+(H-pad.t-pad.b)*(1-v/maxY);
+  for(let g=0;g<=4;g++){const v=maxY*g/4,y=Y(v);
+    el("line",{x1:pad.l,y1:y,x2:W-pad.r,y2:y,class:"gridline"},svg);
+    const t=el("text",{x:pad.l-8,y:y+3,"text-anchor":"end"},svg);t.textContent=(v/1000)+"k";}
+  PROMPTS.forEach((v,i)=>{
+    const h=(H-pad.t-pad.b)*v/maxY,x=X(i)-bw/2,y=Y(v);
+    el("rect",{x,y,width:bw,height:h,rx:3,fill:i===14?"var(--s6)":"var(--s1)",style:"cursor:pointer"},svg)
+      .addEventListener("mousemove",e=>showTT(`<b>${WEEKS[i]}</b>${i===15?' · <span class="muted">partial wk</span>':''}<br><b>${fmt(v)}</b> prompts`,e.clientX,e.clientY));
+    if(i%3===0||i===n-1){const t=el("text",{x:X(i),y:H-8,"text-anchor":"middle"},svg);t.textContent=WEEKS[i];}
+  });
+  svg.addEventListener("mouseleave",hideTT);
+  const pk=el("text",{x:X(14),y:Y(11412)-8,"text-anchor":"middle",style:"fill:var(--good-ink);font-weight:800;font-size:11px"},svg);
+  pk.textContent="peak 11,412";
+}
+
+/* ---------- H-BARS: category distribution ---------- */
+function catChart(){
+  const box=$("#chartCat");box.innerHTML="";
+  const colors=["var(--s1)","var(--s2)","var(--s4)","var(--s3)","var(--s7)"];
+  const max=Math.max(...CATS.map(c=>c.pct));
+  const wrap=document.createElement("div");
+  CATS.forEach((c,i)=>{
+    const row=document.createElement("div");row.style.margin="14px 0";
+    row.innerHTML=`<div style="display:flex;justify-content:space-between;font-size:.86rem;margin-bottom:5px">
+      <span style="font-weight:700">${c.name}</span><span class="tabnums" style="font-weight:800">${c.pct}%</span></div>
+      <div style="height:12px;background:var(--grid);border-radius:7px;overflow:hidden">
+        <div style="height:100%;width:${(c.pct/max*100).toFixed(1)}%;background:${colors[i]};border-radius:7px"></div></div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">${fmt(c.n)} prompts · top: ${c.sub}</div>`;
+    wrap.appendChild(row);
+  });
+  box.appendChild(wrap);
+}
+
+/* ---------- STACKED: adoption / value tiers ---------- */
+let tierView="adopt";
+function tierChart(){
+  const box=$("#chartTiers");box.innerHTML="";
+  const data=TIERS[tierView];
+  const W=box.clientWidth||520,rowH=34,pad={l:142,r:52,t:6,b:8};
+  const H=pad.t+pad.b+data.length*rowH;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H},box);
+  const max=Math.max(...data.map(d=>d.a+d.e+d.p));
+  const scale=(W-pad.l-pad.r)/max;
+  const cols={a:"var(--s1)",e:"var(--s4)",p:"var(--s6)"};
+  const names={a:"Active",e:"Engaged",p:"Power"};
+  data.forEach((d,i)=>{
+    const y=pad.t+i*rowH+6;
+    const t=el("text",{x:pad.l-10,y:y+15,"text-anchor":"end",style:"fill:var(--ink);font-weight:700;font-size:11px"},svg);
+    t.textContent=d.role;
+    let x=pad.l;
+    ["a","e","p"].forEach(k=>{
+      const w=d[k]*scale;
+      if(w>0){
+        el("rect",{x:x+1,y,width:Math.max(w-2,1),height:20,rx:3,fill:cols[k],style:"cursor:pointer"},svg)
+          .addEventListener("mousemove",e=>showTT(`<b>${d.role}</b> · ${names[k]}<br><b>${d[k]}</b> ${tierView==='adopt'?'users':'sellers'}`,e.clientX,e.clientY));
+        x+=w;
+      }
+    });
+    const u=el("text",{x:x+8,y:y+15,style:"fill:var(--ink-2);font-weight:800;font-size:11px"},svg);
+    u.textContent=d.using+"%";
+  });
+  svg.addEventListener("mouseleave",hideTT);
+  const leg=$("#tierLegend");
+  leg.innerHTML=[["Active","var(--s1)"],["Engaged","var(--s4)"],["Power","var(--s6)"]]
+    .map(([n,c])=>`<span class="li"><span class="sw" style="background:${c}"></span>${n}</span>`).join("")
+    +`<span class="li" style="color:var(--muted)">% = share of role population using</span>`;
+}
+
+/* ---------- complexity mini-bars ---------- */
+function complexityChart(){
+  const box=$("#chartComplexity");box.innerHTML="";
+  const cols=["var(--s3)","var(--s1)","var(--s2)"];
+  COMPLEX.forEach((c,i)=>{
+    const row=document.createElement("div");row.style.margin="12px 0";
+    row.innerHTML=`<div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px">
+      <span style="font-weight:700">${c.k} <span style="color:var(--muted);font-weight:500">· ${c.t}</span></span>
+      <span class="tabnums" style="font-weight:800">${c.mix}%</span></div>
+      <div style="height:11px;background:var(--grid);border-radius:7px;overflow:hidden">
+        <div style="height:100%;width:${c.mix*2}%;max-width:100%;background:${cols[i]};border-radius:7px"></div></div>
+      <div style="font-size:.76rem;color:var(--muted);margin-top:3px">${c.def}</div>`;
+    box.appendChild(row);
+  });
+}
+
+/* ---------- cookbook table ---------- */
+function cookbookTable(){
+  const b=$("#cookbookBody");
+  b.innerHTML=COOKBOOK.map(r=>`<tr><td>${r.w}</td><td class="num">${fmt(r.uses)}</td><td class="num">${r.h.toLocaleString('en-US',{minimumFractionDigits:1})}</td></tr>`).join("")
+    +`<tr class="total"><td>Total</td><td class="num">9,430</td><td class="num">7,759.2</td></tr>`;
+}
+
+/* ---------- FOUR PHASES ---------- */
+function renderPhases(active=3){
+  const box=$("#phases");box.innerHTML="";
+  PHASES.forEach((p,i)=>{
+    const d=document.createElement("div");
+    d.className="phase"+(i===active?" active":"");
+    d.innerHTML=`<div class="idx">${p.idx}</div>
+      <span class="tag" style="background:${hexBg(p.color)};color:${p.color}">${p.tag}</span>
+      <h3>${p.name}</h3><p>${p.sub}</p>
+      <div class="bar"><span style="width:${p.fill}%;background:${p.color}"></span></div>`;
+    d.addEventListener("click",()=>{renderPhases(i);renderPhaseDetail(i);});
+    box.appendChild(d);
+  });
+}
+function hexBg(v){return v.replace("var(--s","").length?`color-mix(in srgb, ${v} 14%, white)`:"#eee";}
+function renderPhaseDetail(i){
+  const p=PHASES[i];
+  $("#phaseDetail").innerHTML=`
+    <span class="tag" style="background:${hexBg(p.color)};color:${p.color};font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:999px">${p.idx} · ${p.name}</span>
+    <h3 style="margin-top:10px">${p.body}</h3>
+    <div class="meta">
+      <div class="m"><div class="k">${p.metric1[0]}</div><div class="v">${p.metric1[1]}</div></div>
+      <div class="m"><div class="k">${p.metric2[0]}</div><div class="v">${p.metric2[1]}</div></div>
+    </div>`;
+}
+
+/* ---------- CALCULATOR ---------- */
+function calc(){
+  const users=+$("#rUsers").value, min=+$("#rMin").value, adopt=+$("#rAdopt").value/100,
+        cost=+$("#rCost").value, days=+$("#rDays").value;
+  $("#vUsers").textContent=fmt(users);
+  $("#vMin").textContent=min;
+  $("#vAdopt").textContent=Math.round(adopt*100)+"%";
+  $("#vCost").textContent="$"+cost;
+  $("#vDays").textContent=days;
+  const activeUsers=users*adopt;
+  const hours=activeUsers*min/60*days;
+  const money=hours*cost;
+  const perUser=activeUsers>0?hours/activeUsers:0;
+  // potential = full adoption
+  const potentialHours=users*min/60*days;
+  const potentialMoney=potentialHours*cost;
+  const latent=potentialMoney-money;
+  $("#oMoney").textContent="$"+fmt(Math.round(money));
+  $("#oHours").textContent=fmt(Math.round(hours));
+  $("#oPer").textContent=Math.round(perUser);
+  $("#gReal").textContent="$"+fmt(Math.round(money));
+  $("#gUnreal").textContent="$"+fmt(Math.round(latent));
+  const realPct=potentialMoney>0?money/potentialMoney*100:0;
+  $("#mReal").style.width=realPct.toFixed(1)+"%";
+  $("#mUnreal").style.width=(100-realPct).toFixed(1)+"%";
+  const msg=$("#gapMsg");
+  if(adopt>=1) msg.innerHTML="✅ <b style='color:#8fe0b0'>Full realization.</b> Every user with access is active — no value left on the table.";
+  else msg.innerHTML=`⚠️ <b>${Math.round((1-adopt)*users)}</b> users still hold latent value. Moving them from access to active would realize <b style="color:#8fe0b0">$${fmt(Math.round(latent))}</b> more per year.`;
+}
+
+/* ---------- init ---------- */
+function init(){
+  lineChart();weeklyChart();catChart();tierChart();complexityChart();cookbookTable();
+  renderPhases(3);renderPhaseDetail(3);
+  $("#tierToggle").addEventListener("click",e=>{
+    const b=e.target.closest("button");if(!b)return;
+    tierView=b.dataset.view;
+    [...$("#tierToggle").children].forEach(c=>c.classList.toggle("on",c===b));
+    $("#tierTitle").textContent=tierView==="adopt"?"Who's adopting — by role":"Who's realizing value — by role";
+    $("#tierSub").textContent=tierView==="adopt"?"Active vs. engaged vs. power users, share of population using":"The same sellers, measured in hours banked — who's getting paid back";
+    tierChart();
+  });
+  ["rUsers","rMin","rAdopt","rCost","rDays"].forEach(id=>$("#"+id).addEventListener("input",calc));
+  calc();
+}
+window.addEventListener("load",init);
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{lineChart();weeklyChart();tierChart();},180);});
+</script>
+</body>
+</html>
